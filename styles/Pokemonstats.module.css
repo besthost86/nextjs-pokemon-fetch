@@ -1,0 +1,43 @@
+
+.container {
+    --progressWidth: 50%;
+    display: grid;
+    place-content: center;
+    grid-gap: 1.5em
+}
+.container h1 {
+    text-align: center;
+}
+.container div {
+    display: grid;
+    row-gap: 5px;
+}
+.container > div > div.static {
+    background-color: rgba(252, 248, 245, 0.6);
+    width: 100%;
+    height: 50px;
+    position: relative;
+}
+div.static > div.progress {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    animation: progressBar 1s ease-out forwards
+}
+    
+.container > div > div > .stat {
+    margin: 0;
+    margin-left: 10px;
+    line-height: 50px;
+    z-index: 10;
+}
+
+
+@keyframes progressBar {
+    from {
+        width: 10px;
+    }
+    to {
+        width: var(--progressWidth)
+    }
+}
