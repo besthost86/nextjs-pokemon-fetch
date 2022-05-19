@@ -50,7 +50,7 @@ interface SSRparams {
 
 export async function getServerSideProps({req, res}: SSRparams) {
   try {
-   res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+   res.setHeader('Cache-Control', 'public, max-age=100000, stale-while-revalidate=59');
    const data = await fetchPokemonUrls();
    const pokemons = await fetchPokemonData(data.results)
    return {
