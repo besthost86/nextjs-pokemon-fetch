@@ -1,5 +1,5 @@
 import { useEffect, useState}  from 'react'
-import {useFetchPokemonUrls, useFetchPokemonData} from '../hooks/useFetchPokemons'
+import {fetchPokemonUrls, fetchPokemonData} from '../hooks/useFetchPokemons'
 import usePokemonContext from '../context/PokemonContext'
 import type {ContextValueType} from '../context/PokemonContext'
 import type { NextPage } from 'next'
@@ -18,18 +18,17 @@ export interface PokemonDetails extends PokemonUrl {
   }
 }
 
-const Home: NextPage = () => {
+const Home: NextPage =  () => {
 
   const [pokemonUrls, setPokemonUrls] = useState<PokemonUrl[]>([]);
   const [pokemons, setPokemons]: ContextValueType = usePokemonContext()
-  
+
   useEffect(  () => {
-    console.log('one time fetch');
-    useFetchPokemonUrls().then(data => setPokemonUrls(data.results) ) 
+    fetchPokemonUrls().then(data => setPokemonUrls(data.results) );
   },[]);
 
   useEffect(() => {
-    if (pokemonUrls) useFetchPokemonData(pokemonUrls).then(data => setPokemons(data))
+    if (pokemonUrls) fetchPokemonData(pokemonUrls).then(data => setPokemons(data))
   
   },[pokemonUrls]);
   return (

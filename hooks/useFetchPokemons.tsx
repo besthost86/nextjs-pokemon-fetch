@@ -1,12 +1,11 @@
-import React from 'react'
 import type {PokemonUrl} from '../pages/index'
 
-export async function useFetchPokemonUrls() {
+export async function fetchPokemonUrls() {
   const res = await fetch('https://pokeapi.co/api/v2/pokemon?offset=40&limit=45');
   return res.json();
 }
 
-export async function useFetchPokemonData(pokemonUrls: PokemonUrl[]) {
+export async function fetchPokemonData(pokemonUrls: PokemonUrl[]) {
     const pokemonList = [];
     for await (const pokemon of pokemonUrls) {
       const res2 = await fetch(pokemon.url);
