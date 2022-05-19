@@ -1,4 +1,4 @@
-import { useEffect, useState}  from 'react'
+import { useEffect, useLayoutEffect ,useState}  from 'react'
 import {fetchPokemonUrls, fetchPokemonData} from '../hooks/useFetchPokemons'
 import usePokemonContext from '../context/PokemonContext'
 import type {ContextValueType} from '../context/PokemonContext'
@@ -17,22 +17,18 @@ export interface PokemonDetails extends PokemonUrl {
     other: any
   }
 }
+interface propsType {
+  pokemons: PokemonDetails[]
+}
 
-const Home: NextPage =  () => {
 
-  const [pokemonUrls, setPokemonUrls] = useState<PokemonUrl[]>([]);
-  const [pokemons, setPokemons]: ContextValueType = usePokemonContext()
-
-  useEffect(  () => {
-    fetchPokemonUrls().then(data => setPokemonUrls(data.results) );
-  },[]);
+const Home: NextPage<propsType> =  ({pokemons}) => {
+  const [globalPokemons, setGlobalPokemons] = usePokemonContext();
 
   useEffect(() => {
-    if (pokemonUrls) fetchPokemonData(pokemonUrls).then(data => setPokemons(data))
-  
-  },[pokemonUrls]);
+    setGlobalPokemons(pokemons);
+  });
   return (
-    pokemons.length ?
     <div className={styles.container}>
      {pokemons.map((pokemon, index) => (
        <Link href={`/pokemon/${pokemon.id}`} key={index}>
@@ -43,13 +39,28 @@ const Home: NextPage =  () => {
        </Link>
       ))}
     </div>
-    : null
   )
 }
 
+interface SSRparams {
+  req: any;
+  res: any
+}
 
 
+export async function getServerSideProps({req, res}: SSRparams) {
+  try {
+   res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+   const data = await fetchPokemonUrls();
+   const pokemons = await fetchPokemonData(data.results)
+   return {
+     props: {pokemons}
+   }
+  }
+  catch(err) {
+    if (typeof err === 'string')
+    throw new Error(err)
+  }
+}
 
 export default Home
-
-
