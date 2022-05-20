@@ -1,32 +1,10 @@
-import React, {useEffect, useState} from 'react'
-import usePokemonContext from '../../context/PokemonContext';
-import { statColors } from '../../context/PokemonContext';
-import {useRouter} from 'next/router'
+import { statColors } from '../../store/PokemonContext'; 
 import type {PokemonDetails} from '../index'
 import styles from  '../../styles/Pokemonstats.module.css'
 
-export default function PokemonStats() {
-  const [pokemons, setPokemons] = usePokemonContext()
-  const [pokemon, setPokemon] = useState<PokemonDetails>();
-  const router = useRouter();
+export default function PokemonStats({pokemon} : {pokemon: PokemonDetails}) {
+
   
-  
-  useEffect(() => {
-    if (!router.isReady) return 
-    setPokemon(pokemons.find(p => p.id === parseInt(router.query.id as string)))
-    
-    async function fetchWebIfNoPokemon() {
-
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${router.query.id}`);
-      const data = await res.json();
-      data && setPokemon(data);
-    }
-    if (!pokemons.length) {
-      fetchWebIfNoPokemon();
-    }
-  },[pokemons, router.isReady]);
-
-
   return pokemon ? (
     <div className={styles.container}>
          <img src={pokemon.sprites.other["official-artwork"]["front_default"]} alt={`Pokemon ${pokemon.name}`} />
@@ -36,4 +14,23 @@ export default function PokemonStats() {
   )
     : null  
   
+}
+
+interface SSRProps {
+  req: any;
+  res: any;
+  params: {
+    id: string
+  }
+}
+
+export async function getServerSideProps({req, res, params: {id}}: SSRProps) {
+  res.setHeader('Cache-Control', 'public, max-age=100000, stale-while-revalidate=59');
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+  const data = await response.json();
+  return {
+    props: {
+      pokemon: data
+    }
+  }
 }
