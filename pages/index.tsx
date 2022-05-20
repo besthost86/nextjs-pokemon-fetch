@@ -1,8 +1,5 @@
-import { useEffect, useLayoutEffect ,useState}  from 'react'
 import {fetchPokemonUrls, fetchPokemonData} from '../hooks/useFetchPokemons'
-import usePokemonContext from '../context/PokemonContext'
-import type {ContextValueType} from '../context/PokemonContext'
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import Link from 'next/link'
 import styles from '../styles/Home.module.css'
 
@@ -23,11 +20,8 @@ interface propsType {
 
 
 const Home: NextPage<propsType> =  ({pokemons}) => {
-  const [globalPokemons, setGlobalPokemons] = usePokemonContext();
+  
 
-  useEffect(() => {
-    setGlobalPokemons(pokemons);
-  });
   return (
     <div className={styles.container}>
      {pokemons.map((pokemon, index) => (
@@ -42,7 +36,7 @@ const Home: NextPage<propsType> =  ({pokemons}) => {
   )
 }
 
-interface SSRparams {
+interface SSRparams extends GetServerSideProps {
   req: any;
   res: any
 }
@@ -50,7 +44,7 @@ interface SSRparams {
 
 export async function getServerSideProps({req, res}: SSRparams) {
   try {
-   res.setHeader('Cache-Control', 'public, max-age=100000, stale-while-revalidate=59');
+   res.setHeader('Cache-Control', 'public, max-age=31536000, stale-while-revalidate=1');
    const data = await fetchPokemonUrls();
    const pokemons = await fetchPokemonData(data.results)
    return {
