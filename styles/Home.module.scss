@@ -1,7 +1,35 @@
 .container {
-  /* padding: 0 2rem; */
   display: grid;
-  grid-template-columns: repeat(auto-fit, 200px)
+  place-content: center;
+  input {
+    height: 50px;
+    padding-left: 20px;
+    margin: 20px;
+    font-size: 1.2em;
+    outline: none;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 2px 5px 15px  rgba(0,0,0,0.4);
+    width: 100%;
+  }
+  .results {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    place-content: center;
+    justify-items: center;
+    .result {
+      display: grid;
+      place-content: center;
+      width: 90px;
+      cursor: pointer;
+      p {
+        text-align: center;
+        margin: 0;
+        position: relative;
+        top: -10px;
+      }
+    }
+  }
 }
 div.pokemon-card {
   display: grid;

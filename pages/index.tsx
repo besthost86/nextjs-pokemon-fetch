@@ -1,54 +1,51 @@
 import {fetchPokemonUrls, fetchPokemonData} from '../hooks/useFetchPokemons'
-import type { GetServerSideProps, NextPage } from 'next'
+import {useState} from 'react'
+import type { GetStaticProps, NextPage } from 'next'
 import Link from 'next/link'
-import styles from '../styles/Home.module.css'
+import styles from '../styles/Home.module.scss'
 
 export interface PokemonUrl {
   name: string, 
   url: string
 }
-export interface PokemonDetails extends PokemonUrl {
-  id: number;
-  stats: any[];
-  sprites: {
-    other: any
-  }
-}
+
 interface propsType {
-  pokemons: PokemonDetails[]
+  pokemons: PokemonUrl[]
 }
 
 
 const Home: NextPage<propsType> =  ({pokemons}) => {
   
 
+const [matches, setMatches] = useState<PokemonUrl[] | "">([]);
+
+  const searchPokemons = (e: React.ChangeEvent<HTMLInputElement>) => {
+    
+    const filter = e.target.value && pokemons.filter(p => p.name.startsWith(e.target.value) )
+    setMatches(filter);
+  }
+
   return (
     <div className={styles.container}>
-     {pokemons.map((pokemon, index) => (
-       <Link href={`/pokemon/${pokemon.id}`} key={index}>
-        <div className={styles["pokemon-card"]}>
-       <img src={pokemon.sprites.other["official-artwork"]["front_default"]} alt={`Pokemon ${pokemon.name}`} />
-       <p>{pokemon.name}</p>
+      <img src="/logo.png" alt="pokemon logo" />
+      <input type="text" placeholder="...search" onChange={(e) => searchPokemons(e)}/>
+      <div className={styles.results}> { matches ? matches.map((match: PokemonUrl, index: number) => ( 
+        <Link href={`/pokemon/${match.name}`}>
+          <div key={index} className={styles.result}>
+            <img style={{width: '80px'}} src="/Pokeball.svg" alt="pokemon ball" />
+            <p>{match.name}</p> 
+        </div> 
+        </Link> )) : undefined}
        </div>
-       </Link>
-      ))}
     </div>
   )
 }
 
-interface SSRparams extends GetServerSideProps {
-  req: any;
-  res: any
-}
-
-
-export async function getServerSideProps({req, res}: SSRparams) {
+export async function getServerSideProps() {
   try {
-   res.setHeader('Cache-Control', 'public, max-age=31536000, stale-while-revalidate=1');
    const data = await fetchPokemonUrls();
-   const pokemons = await fetchPokemonData(data.results)
    return {
-     props: {pokemons}
+     props: {pokemons: data.results}
    }
   }
   catch(err) {

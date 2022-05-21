@@ -1,7 +1,7 @@
 import type {PokemonUrl} from '../pages/index'
 
 export async function fetchPokemonUrls() {
-  const res = await fetch('https://pokeapi.co/api/v2/pokemon?offset=40&limit=45');
+  const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=200');
   return res.json();
 }
 
