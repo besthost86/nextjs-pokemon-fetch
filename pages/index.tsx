@@ -1,7 +1,8 @@
 import {fetchPokemonUrls, fetchPokemonData} from '../hooks/useFetchPokemons'
 import {useState} from 'react'
-import type { GetStaticProps, NextPage } from 'next'
+import type { NextPage } from 'next'
 import Link from 'next/link'
+import Ball from '../assets/Pokeball.svg'
 import styles from '../styles/Home.module.scss'
 
 export interface PokemonUrl {
@@ -32,7 +33,7 @@ const [matches, setMatches] = useState<PokemonUrl[] | "">([]);
       <div className={styles.results}> { matches ? matches.map((match: PokemonUrl, index: number) => ( 
         <Link key={index} href={`/pokemon/${match.name}`}>
           <div  className={styles.result}>
-            <img style={{width: '80px'}} src="/Pokeball.svg" alt="pokemon ball" />
+          <Ball className={styles.ball}/>
             <p>{match.name}</p> 
         </div> 
         </Link> )) : undefined}
