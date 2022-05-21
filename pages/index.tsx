@@ -30,8 +30,8 @@ const [matches, setMatches] = useState<PokemonUrl[] | "">([]);
       <img src="/logo.png" alt="pokemon logo" />
       <input type="text" placeholder="...search" onChange={(e) => searchPokemons(e)}/>
       <div className={styles.results}> { matches ? matches.map((match: PokemonUrl, index: number) => ( 
-        <Link href={`/pokemon/${match.name}`}>
-          <div key={index} className={styles.result}>
+        <Link key={index} href={`/pokemon/${match.name}`}>
+          <div  className={styles.result}>
             <img style={{width: '80px'}} src="/Pokeball.svg" alt="pokemon ball" />
             <p>{match.name}</p> 
         </div> 
